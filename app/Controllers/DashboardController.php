@@ -10,6 +10,8 @@ final class DashboardController extends Controller
 {
     public function index(): void
     {
+        $this->requireLogin();
+
         $income = 38500000;
         $expense = 29200000;
         $balance = $income - $expense;

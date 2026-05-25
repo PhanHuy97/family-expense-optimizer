@@ -1,6 +1,7 @@
 <?php
 $appName = $this->config['app_name'] ?? 'Family Expense Optimizer';
 $pageTitle = isset($title) ? "{$title} | {$appName}" : $appName;
+$userName = $_SESSION['user_name'] ?? 'Gia đình';
 ?>
 <!doctype html>
 <html lang="vi">
@@ -29,7 +30,18 @@ $pageTitle = isset($title) ? "{$title} | {$appName}" : $appName;
 
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <span class="nav-link">Gia đình</span>
+                <span class="nav-link">
+                    <i class="fas fa-user-circle mr-1"></i>
+                    <?= htmlspecialchars((string) $userName, ENT_QUOTES, 'UTF-8') ?>
+                </span>
+            </li>
+            <li class="nav-item d-flex align-items-center">
+                <form action="<?= htmlspecialchars($this->url('/logout'), ENT_QUOTES, 'UTF-8') ?>" method="post" class="mb-0">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-right-from-bracket mr-1"></i>
+                        Đăng xuất
+                    </button>
+                </form>
             </li>
         </ul>
     </nav>

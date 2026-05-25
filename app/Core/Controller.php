@@ -32,7 +32,7 @@ abstract class Controller
     protected function requireLogin(): void
     {
         if (empty($_SESSION['user_id'])) {
-            $this->setFlash('warning', 'Vui long dang nhap de tiep tuc.');
+            $this->setFlash('warning', 'Vui lòng đăng nhập để tiếp tục.');
             $this->redirect('/login');
         }
     }
@@ -74,5 +74,20 @@ abstract class Controller
         require ROOT_PATH . '/app/Views/layouts/sidebar.php';
         require $viewPath;
         require ROOT_PATH . '/app/Views/layouts/footer.php';
+    }
+
+    protected function authView(string $view, array $data = []): void
+    {
+        $data['flashMessages'] = $this->getFlashMessages();
+
+        extract($data, EXTR_SKIP);
+
+        $viewPath = ROOT_PATH . '/app/Views/' . str_replace('.', '/', $view) . '.php';
+
+        if (!is_file($viewPath)) {
+            throw new \RuntimeException("View not found: {$view}");
+        }
+
+        require $viewPath;
     }
 }
