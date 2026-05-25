@@ -23,6 +23,36 @@ abstract class Controller
         return $basePath . ($path === '/' ? '' : $path);
     }
 
+    protected function redirect(string $path, int $statusCode = 302): void
+    {
+        header('Location: ' . $this->url($path), true, $statusCode);
+        exit;
+    }
+
+    protected function requireLogin(): void
+    {
+        if (empty($_SESSION['user_id'])) {
+            $this->setFlash('warning', 'Vui long dang nhap de tiep tuc.');
+            $this->redirect('/login');
+        }
+    }
+
+    protected function setFlash(string $type, string $message): void
+    {
+        $_SESSION['flash_messages'][] = [
+            'type' => $type,
+            'message' => $message,
+        ];
+    }
+
+    protected function getFlashMessages(): array
+    {
+        $messages = $_SESSION['flash_messages'] ?? [];
+        unset($_SESSION['flash_messages']);
+
+        return is_array($messages) ? $messages : [];
+    }
+
     protected function db(): PDO
     {
         return Database::connection($this->config['database'] ?? []);
@@ -30,6 +60,8 @@ abstract class Controller
 
     protected function view(string $view, array $data = []): void
     {
+        $data['flashMessages'] = $this->getFlashMessages();
+
         extract($data, EXTR_SKIP);
 
         $viewPath = ROOT_PATH . '/app/Views/' . str_replace('.', '/', $view) . '.php';

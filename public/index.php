@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 define('ROOT_PATH', dirname(__DIR__));
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 spl_autoload_register(function (string $class): void {
     $prefix = 'App\\';
     $baseDir = ROOT_PATH . '/app/';
@@ -22,8 +26,15 @@ spl_autoload_register(function (string $class): void {
 
 $config = require ROOT_PATH . '/config/app.php';
 $config['database'] = require ROOT_PATH . '/config/database.php';
+
 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
-$config['base_path'] = $scriptDir === '/' ? '' : rtrim($scriptDir, '/');
+$basePath = $scriptDir === '/' ? '' : rtrim($scriptDir, '/');
+
+if (str_ends_with($basePath, '/public')) {
+    $basePath = substr($basePath, 0, -7);
+}
+
+$config['base_path'] = $basePath === '/' ? '' : $basePath;
 
 $router = new App\Core\Router($config);
 $router->get('/', [App\Controllers\DashboardController::class, 'index']);
