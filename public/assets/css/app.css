@@ -1,0 +1,19 @@
+.brand-link .brand-text {
+    display: inline-block;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.small-box .inner h3 {
+    font-size: clamp(1.35rem, 2vw, 2rem);
+    min-height: 2.4rem;
+    white-space: normal;
+    word-break: break-word;
+}
+
+#incomeExpenseChart {
+    min-height: 320px;
+}
