@@ -21,6 +21,9 @@ spl_autoload_register(function (string $class): void {
 });
 
 $config = require ROOT_PATH . '/config/app.php';
+$config['database'] = require ROOT_PATH . '/config/database.php';
+$scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
+$config['base_path'] = $scriptDir === '/' ? '' : rtrim($scriptDir, '/');
 
 $router = new App\Core\Router($config);
 $router->get('/', [App\Controllers\DashboardController::class, 'index']);

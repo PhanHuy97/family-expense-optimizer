@@ -11,7 +11,7 @@ $pageTitle = isset($title) ? "{$title} | {$appName}" : $appName;
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="<?= htmlspecialchars($this->url('/assets/css/app.css'), ENT_QUOTES, 'UTF-8') ?>">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -23,7 +23,7 @@ $pageTitle = isset($title) ? "{$title} | {$appName}" : $appName;
                 </a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="<?= htmlspecialchars($this->url('/dashboard'), ENT_QUOTES, 'UTF-8') ?>" class="nav-link">Dashboard</a>
             </li>
         </ul>
 

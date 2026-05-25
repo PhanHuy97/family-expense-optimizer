@@ -2,7 +2,7 @@
 $appName = $this->config['app_name'] ?? 'Family Expense Optimizer';
 ?>
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
-        <a href="/dashboard" class="brand-link">
+        <a href="<?= htmlspecialchars($this->url('/dashboard'), ENT_QUOTES, 'UTF-8') ?>" class="brand-link">
             <i class="brand-image fas fa-wallet ml-3 mt-2"></i>
             <span class="brand-text font-weight-light"><?= htmlspecialchars($appName, ENT_QUOTES, 'UTF-8') ?></span>
         </a>
@@ -11,7 +11,7 @@ $appName = $this->config['app_name'] ?? 'Family Expense Optimizer';
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
                     <li class="nav-item">
-                        <a href="/dashboard" class="nav-link active">
+                        <a href="<?= htmlspecialchars($this->url('/dashboard'), ENT_QUOTES, 'UTF-8') ?>" class="nav-link active">
                             <i class="nav-icon fas fa-chart-pie"></i>
                             <p>Dashboard</p>
                         </a>

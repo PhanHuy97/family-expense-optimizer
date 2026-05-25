@@ -23,6 +23,13 @@ final class Router
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $path = $this->normalizePath(parse_url($requestUri, PHP_URL_PATH) ?: '/');
+        $basePath = $this->normalizePath($this->config['base_path'] ?? '');
+
+        if ($basePath !== '/' && str_starts_with($path, $basePath)) {
+            $path = substr($path, strlen($basePath)) ?: '/';
+            $path = $this->normalizePath($path);
+        }
+
         $handler = $this->routes[$method][$path] ?? null;
 
         if ($handler === null) {

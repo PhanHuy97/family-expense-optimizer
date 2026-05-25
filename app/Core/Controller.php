@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use PDO;
+
 abstract class Controller
 {
     protected $config;
@@ -11,6 +13,19 @@ abstract class Controller
     public function __construct(array $config = [])
     {
         $this->config = $config;
+    }
+
+    public function url(string $path = ''): string
+    {
+        $basePath = rtrim((string) ($this->config['base_path'] ?? ''), '/');
+        $path = '/' . ltrim($path, '/');
+
+        return $basePath . ($path === '/' ? '' : $path);
+    }
+
+    protected function db(): PDO
+    {
+        return Database::connection($this->config['database'] ?? []);
     }
 
     protected function view(string $view, array $data = []): void
