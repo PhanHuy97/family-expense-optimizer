@@ -25,6 +25,56 @@ final class Income
         return $statement->fetchAll();
     }
 
+    public function totalByUser(int $userId): float
+    {
+        $statement = $this->db->prepare('SELECT COALESCE(SUM(amount), 0) FROM incomes WHERE user_id = :user_id');
+        $statement->execute(['user_id' => $userId]);
+
+        return (float) $statement->fetchColumn();
+    }
+
+    public function totalByUserBetween(int $userId, string $startDate, string $endDate): float
+    {
+        $statement = $this->db->prepare(
+            'SELECT COALESCE(SUM(amount), 0)
+             FROM incomes
+             WHERE user_id = :user_id
+               AND income_date >= :start_date
+               AND income_date <= :end_date'
+        );
+        $statement->execute([
+            'user_id' => $userId,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+        ]);
+
+        return (float) $statement->fetchColumn();
+    }
+
+    public function monthlyTotals(int $userId, string $startDate, string $endDate): array
+    {
+        $statement = $this->db->prepare(
+            "SELECT DATE_FORMAT(income_date, '%Y-%m') AS month_key, COALESCE(SUM(amount), 0) AS total
+             FROM incomes
+             WHERE user_id = :user_id
+               AND income_date >= :start_date
+               AND income_date <= :end_date
+             GROUP BY month_key"
+        );
+        $statement->execute([
+            'user_id' => $userId,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+        ]);
+
+        $totals = [];
+        foreach ($statement->fetchAll() as $row) {
+            $totals[(string) $row['month_key']] = (float) $row['total'];
+        }
+
+        return $totals;
+    }
+
     public function findByUser(int $id, int $userId): ?array
     {
         $statement = $this->db->prepare(

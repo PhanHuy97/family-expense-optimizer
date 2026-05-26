@@ -2,8 +2,10 @@
 $formatCurrency = static function ($amount): string {
     return number_format((float) $amount, 0, ',', '.') . ' VND';
 };
+$hasBudgetLimit = (float) $budgetLimit > 0;
 $budgetClass = $isBudgetWarning ? 'danger' : 'success';
-$budgetText = $isBudgetWarning ? 'Sắp vượt hạn mức' : 'Trong hạn mức';
+$budgetText = !$hasBudgetLimit ? 'Chưa thiết lập hạn mức' : ($isBudgetWarning ? 'Sắp vượt hạn mức' : 'Trong hạn mức');
+$progressWidth = $hasBudgetLimit ? min((float) $budgetUsage, 100) : 0;
 ?>
     <div class="content-wrapper">
         <section class="content-header">
@@ -24,12 +26,18 @@ $budgetText = $isBudgetWarning ? 'Sắp vượt hạn mức' : 'Trong hạn mứ
 
         <section class="content">
             <div class="container-fluid">
+                <?php foreach ($flashMessages as $message): ?>
+                    <div class="alert alert-<?= htmlspecialchars((string) $message['type'], ENT_QUOTES, 'UTF-8') ?>">
+                        <?= htmlspecialchars((string) $message['message'], ENT_QUOTES, 'UTF-8') ?>
+                    </div>
+                <?php endforeach; ?>
+
                 <div class="row">
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-success">
                             <div class="inner">
                                 <h3><?= htmlspecialchars($formatCurrency($income), ENT_QUOTES, 'UTF-8') ?></h3>
-                                <p>Tổng thu</p>
+                                <p>Tổng thu tháng này</p>
                             </div>
                             <div class="icon">
                                 <i class="fas fa-arrow-trend-up"></i>
@@ -41,7 +49,7 @@ $budgetText = $isBudgetWarning ? 'Sắp vượt hạn mức' : 'Trong hạn mứ
                         <div class="small-box bg-danger">
                             <div class="inner">
                                 <h3><?= htmlspecialchars($formatCurrency($expense), ENT_QUOTES, 'UTF-8') ?></h3>
-                                <p>Tổng chi</p>
+                                <p>Tổng chi tháng này</p>
                             </div>
                             <div class="icon">
                                 <i class="fas fa-cart-shopping"></i>
@@ -53,7 +61,7 @@ $budgetText = $isBudgetWarning ? 'Sắp vượt hạn mức' : 'Trong hạn mứ
                         <div class="small-box bg-info">
                             <div class="inner">
                                 <h3><?= htmlspecialchars($formatCurrency($balance), ENT_QUOTES, 'UTF-8') ?></h3>
-                                <p>Số dư</p>
+                                <p>Số dư hiện tại</p>
                             </div>
                             <div class="icon">
                                 <i class="fas fa-piggy-bank"></i>
@@ -64,7 +72,7 @@ $budgetText = $isBudgetWarning ? 'Sắp vượt hạn mức' : 'Trong hạn mứ
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-<?= $budgetClass ?>">
                             <div class="inner">
-                                <h3><?= number_format($budgetUsage, 1, ',', '.') ?>%</h3>
+                                <h3><?= $hasBudgetLimit ? number_format((float) $budgetUsage, 1, ',', '.') . '%' : '0%' ?></h3>
                                 <p>Cảnh báo hạn mức</p>
                             </div>
                             <div class="icon">
@@ -100,15 +108,19 @@ $budgetText = $isBudgetWarning ? 'Sắp vượt hạn mức' : 'Trong hạn mứ
                             <div class="card-body">
                                 <strong><?= htmlspecialchars($budgetText, ENT_QUOTES, 'UTF-8') ?></strong>
                                 <p class="text-muted mb-2">
-                                    Đã chi <?= htmlspecialchars($formatCurrency($expense), ENT_QUOTES, 'UTF-8') ?>
-                                    trên hạn mức <?= htmlspecialchars($formatCurrency($budgetLimit), ENT_QUOTES, 'UTF-8') ?>.
+                                    <?php if ($hasBudgetLimit): ?>
+                                        Đã chi <?= htmlspecialchars($formatCurrency($expense), ENT_QUOTES, 'UTF-8') ?>
+                                        trên hạn mức <?= htmlspecialchars($formatCurrency($budgetLimit), ENT_QUOTES, 'UTF-8') ?>.
+                                    <?php else: ?>
+                                        Chưa có hạn mức chi tiêu tháng. Vui lòng cập nhật ở trang thiết lập tài chính.
+                                    <?php endif; ?>
                                 </p>
                                 <div class="progress">
                                     <div
                                         class="progress-bar bg-<?= $budgetClass ?>"
                                         role="progressbar"
-                                        style="width: <?= min($budgetUsage, 100) ?>%"
-                                        aria-valuenow="<?= (int) min($budgetUsage, 100) ?>"
+                                        style="width: <?= $progressWidth ?>%"
+                                        aria-valuenow="<?= (int) $progressWidth ?>"
                                         aria-valuemin="0"
                                         aria-valuemax="100"
                                     ></div>
